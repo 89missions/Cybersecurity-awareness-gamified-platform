@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberAware | Login</title>
+    <link rel="stylesheet" href="./css/register.css"> </head>
+<body>
+    <div class="auth-container">
+        <h2>System Access</h2>
+        <p>Enter your credentials to enter the shield.</p>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="userName">Username</label>
+                <input type="text" id="userName" name="userName" required autocomplete="username">
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                    <button type="button" id="togglePassword" class="toggle-btn">Show</button>
+                </div>
+            </div>
+
+            <button type="submit" id="loginBtn">Authorize</button>
+        </form>
+
+        <p style="margin-top: 1.5rem; font-size: 0.85rem;">
+            New recruit? <a href="./index.html" style="color: #60a5fa; text-decoration: none;">Create Account</a>
+        </p>
+
+        <div id="message" class="hidden"></div>
+    </div>
+
+    <script src="./js/login.js"></script>
+</body>
+</html>
