@@ -14,7 +14,8 @@ const handleLogin = async (req,res)=>{
         const foundUser = await registeredusers.findOne({username:userName})
         //if not found
         if(!foundUser){
-           return res.status(400).json({"message":"invalid username or password"})
+         res.status(400).json({"message":"invalid username or password"})
+         return console.log('user not found in the database')
         }
 
         //compare passwords of the found user
@@ -35,20 +36,26 @@ const handleLogin = async (req,res)=>{
             //add to the user..
             foundUser.refreshToken = refreshToken
             const result = await foundUser.save()
-
+            console.log(accessToken)
             //sending it as a cookie and json res for the refreshToken and accessToken respectively to the client..
-            res.cookie('refreshToken',refreshToken,{
-                httpOnly: true, 
+            res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                secure: false,              // false for localhost
+                sameSite: 'lax',            // or 'strict'
+                maxAge: 24 * 60 * 60 * 1000, // 24 hours (not 15 minutes!)
+                path: '/',                   // Available on all paths
+                domain: 'localhost'          // Explicit domain
+            });
+            
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
                 secure: false,
-                sameSite: 'Lax', 
-                maxAge: 24 * 60 * 60 * 1000
-            })
-            res.cookie('accessToken',accessToken,{
-                httpOnly: true, 
-                secure: false,
-                sameSite: 'Lax', 
-                maxAge: 15*60*1000
-            })
+                sameSite: 'lax',
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                path: '/',
+                domain: 'localhost'
+            });
+
             return res.sendStatus(200)
         }
         
