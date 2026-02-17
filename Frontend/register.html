@@ -1,36 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberAware | Register</title>
-    <link rel="stylesheet" href="./css/register.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Register | Cyber Shield</title>
 </head>
 <body>
-    <div class="auth-container">
-        <h2>Join the Cyber Shield</h2>
-        <p>Level up your digital safety skills.</p>
-        
+    <canvas id="threat-map"></canvas>
+    <div class="auth-card">
+        <h2>Join the Shield</h2>
+        <p>Create your agent profile</p>
         <form id="registerForm">
             <div class="input-group">
-                <label for="userName">Username</label>
-                <input type="text" id="userName" name="userName" required autocomplete="username">
+                <label>Username</label>
+                <input type="text" id="user" required>
             </div>
-
             <div class="input-group">
-                <label for="password">Password</label>
-                <div class="password-wrapper">
-                    <input type="password" id="password" name="password" required autocomplete="new-password">
-                    <button type="button" id="togglePassword" class="toggle-btn">Show</button>
-                </div>
+                <label>Password</label>
+                <input type="password" id="pass" required>
             </div>
-
-            <button type="submit" id="regBtn">Enlist Now</button>
+            <button type="submit" id="submitBtn">
+                <span class="btn-text">Enlist Now</span>
+                <div class="spinner"></div>
+            </button>
         </form>
-
         <div id="message" class="hidden"></div>
     </div>
-
+    <script src="./js/bg-map.js"></script>
     <script src="./js/register.js"></script>
 </body>
 </html>

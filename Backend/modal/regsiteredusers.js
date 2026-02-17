@@ -5,7 +5,7 @@ const user = new schema({
     username:{type:String, required:true},
     password: {type:String, required:true},
     refreshToken: String,
-    points: {type:Number, default:0},
+    totalPoints: {type:Number, default:0},
     completedModules: {type:Number,default:0},
     totalModules: {type:Number, default:0},
     rank: {type:String, default:"RECRUIT"},

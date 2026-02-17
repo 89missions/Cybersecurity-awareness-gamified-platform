@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberAware | Secure Entry</title>
+    <link rel="stylesheet" href="./css/register.css">
+    <style>
+        body { margin: 0; overflow: hidden; } /* Prevents scrollbars from map */
+        
+        #threat-map {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Sits behind everything */
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+        }
+
+        .hero-section {
+            text-align: center;
+            max-width: 500px;
+            z-index: 10;
+        }
+
+        .logo-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            filter: drop-shadow(0 0 15px #60a5fa);
+            animation: pulse 2s infinite;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            background: transparent !important;
+            border: 2px solid #3b82f6 !important;
+            color: #60a5fa !important;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="threat-map"></canvas>
+
+    <div class="auth-container hero-section">
+        <div class="logo-icon">🛡️</div>
+        <h2>CYBER SHIELD ALPHA</h2>
+        <p>Advanced threat detection & digital defense.<br>Authorized Personnel Only.</p>
+
+        <div class="button-group">
+            <button onclick="location.href='./login.html'" id="loginBtn" style="margin-top:0;">
+                <span class="btn-text">Access Terminal</span>
+            </button>
+            <button onclick="location.href='./register.html'" class="btn-secondary" style="margin-top:0;">
+                <span class="btn-text">Enlist Now</span>
+            </button>
+        </div>
+
+        <p style="margin-top: 2rem; font-size: 0.75rem; color: #475569; letter-spacing: 2px;">
+            NETWORK STATUS: <span style="color: #22c55e;">ENCRYPTED</span>
+        </p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('threat-map');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        const particleCount = 80;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = 'rgba(96, 165, 250, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.strokeStyle = `rgba(96, 165, 250, ${1 - distance/150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        init();
+        animate();
+    </script>
+</body>
+</html>

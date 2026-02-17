@@ -1,0 +1,205 @@
+/* quiz.css - extends your dashboard styling */
+
+/* Question card */
+.question-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3);
+    transition: 0.2s;
+}
+
+.question-text {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Options grid */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.option-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.option-btn:hover:not(:disabled) {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.option-btn.selected {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.option-btn.correct {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: var(--success);
+}
+
+.option-btn.wrong {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+    opacity: 0.7;
+}
+
+.option-prefix {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    color: var(--accent);
+    background: rgba(56, 189, 248, 0.1);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.option-btn.correct .option-prefix {
+    background: var(--success);
+    color: black;
+}
+
+.option-btn.wrong .option-prefix {
+    background: #ef4444;
+    color: black;
+}
+
+/* Explanation box */
+.explanation-box {
+    background: rgba(56, 189, 248, 0.05);
+    border-left: 4px solid var(--accent);
+    padding: 1.2rem;
+    border-radius: 0 12px 12px 0;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-dim);
+}
+
+.explanation-box strong {
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+/* Batch indicator */
+.batch-indicator {
+    display: inline-block;
+    background: rgba(56, 189, 248, 0.1);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    margin-bottom: 1rem;
+}
+
+/* Navigation buttons */
+.quiz-nav-btn {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.quiz-nav-btn:hover:not(:disabled) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: black;
+}
+
+.quiz-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.quiz-nav-btn.primary {
+    background: var(--accent);
+    color: black;
+    font-weight: 800;
+}
+
+/* Score summary */
+.score-summary {
+    text-align: center;
+    padding: 3rem;
+}
+
+.score-value {
+    font-size: 5rem;
+    font-weight: 800;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    text-shadow: 0 0 30px rgba(56, 189, 248, 0.5);
+}
+
+.score-message {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    margin: 1.5rem 0;
+}
+
+/* Loading state */
+.loading-spinner {
+    text-align: center;
+    padding: 4rem;
+    color: var(--text-dim);
+}
+
+.loading-spinner::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin: 1rem auto;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .question-text {
+        font-size: 1.2rem;
+    }
+}

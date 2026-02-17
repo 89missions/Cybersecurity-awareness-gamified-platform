@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const registeredusers = require('../modal/regsiteredusers')
+const modules = require('../modal/modules')
 
 const handleLogin = async (req,res)=>{
 
@@ -14,14 +15,15 @@ const handleLogin = async (req,res)=>{
         const foundUser = await registeredusers.findOne({username:userName})
         //if not found
         if(!foundUser){
-         res.status(400).json({"message":"invalid username or password"})
-         return console.log('user not found in the database')
+         return res.status(400).json({"message":"invalid username or password"})
         }
 
         //compare passwords of the found user
            const compare = await bcrypt.compare(password,foundUser.password)
-        if(compare){
-            //now create jwt for the user..
+        if(!compare){
+            return res.status(401).json({"message":"invalid password or username.."})
+        }else{
+//now create jwt for the user..
             const accessToken = jwt.sign({
                 username:userName
             },process.env.ACCESS_TOKEN_SECRET,{
@@ -35,8 +37,16 @@ const handleLogin = async (req,res)=>{
 
             //add to the user..
             foundUser.refreshToken = refreshToken
-            const result = await foundUser.save()
-            console.log(accessToken)
+
+            //check for the total number of modules in the db..
+            const count = await modules.countDocuments()
+
+            //update the count to the registereduser
+            foundUser.totalModules = count
+
+            const update = await foundUser.save() //so with this , anytime the userlogs in, the total number gets updated if there has been a new addition to the module..
+
+            //console.log(accessToken)
             //sending it as a cookie and json res for the refreshToken and accessToken respectively to the client..
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
@@ -60,7 +70,8 @@ const handleLogin = async (req,res)=>{
         }
         
     } catch (error) {
-        
+        console.log('login error', error)
+        res.status(500).json({"message":"internal server error"})
     }
 }
 module.exports = handleLogin

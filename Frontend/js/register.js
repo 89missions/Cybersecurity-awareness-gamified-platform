@@ -1,57 +1,44 @@
-const registerForm = document.getElementById('registerForm');
-const messageDiv = document.getElementById('message');
-const togglePassword = document.getElementById('togglePassword');
-const passwordInput = document.getElementById('password');
-
-// 1. Password Visibility Toggle Logic
-togglePassword.addEventListener('click', () => {
-    // Toggle the type attribute
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
-    
-    // Toggle the button text
-    togglePassword.textContent = type === 'password' ? 'Show' : 'Hide';
-});
-
-// 2. Registration Form Submission
-registerForm.addEventListener('submit', async (e) => {
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Reset message state
-    messageDiv.classList.add('hidden');
-    messageDiv.textContent = "";
+    const btn = document.getElementById('submitBtn');
+    const msg = document.getElementById('message');
+    const user = document.getElementById('user').value;
+    const pass = document.getElementById('pass').value;
 
-    const userName = document.getElementById('userName').value;
-    const password = document.getElementById('password').value;
+    // Start Loading State
+    btn.classList.add('loading');
+    btn.disabled = true;
+    msg.classList.add('hidden');
 
     try {
-        // Updated to port 3500 as per your server config
         const response = await fetch('http://localhost:3000/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userName, password })
+            body: JSON.stringify({ userName: user, password: pass })
         });
 
         const data = await response.json();
-
-        // Show the message div
-        messageDiv.classList.remove('hidden');
+        btn.classList.remove('loading');
+        msg.classList.remove('hidden');
 
         if (response.ok) {
-            messageDiv.textContent = data.message || "Registration Successful! Enlisting...";
-            messageDiv.className = "success";
-            
-            // Redirect to login after 2 seconds
+            msg.className = 'success';
+            msg.textContent = "Registration Successful! Enlisting agent...";
+            // Redirect to login after a short delay
             setTimeout(() => {
-                window.location.href = './login.html';
+                window.location.href = 'login.html';
             }, 2000);
         } else {
-            messageDiv.textContent = data.message || "Registration Failed";
-            messageDiv.className = "error";
+            btn.disabled = false;
+            msg.className = 'error';
+            msg.textContent = data.message || "Registration failed.";
         }
     } catch (error) {
-        messageDiv.classList.remove('hidden');
-        messageDiv.textContent = "Cannot connect to server. Is it running on port 3500?";
-        messageDiv.className = "error";
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        msg.classList.remove('hidden');
+        msg.className = 'error';
+        msg.textContent = "Cannot connect to the server terminal.";
     }
 });

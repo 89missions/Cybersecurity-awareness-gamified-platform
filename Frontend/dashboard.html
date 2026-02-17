@@ -1,1 +1,94 @@
-will be building this tommororw, I will be working on the dashboard page, which will be the main page after login, where users can see their progress, access different levels, and view their achievements. I will also implement the functionality to display user-specific data such as scores and badges earned. Additionally, I will ensure that the dashboard is responsive and user-friendly.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Terminal | Awareness Platform</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <span class="shield-icon">🛡️</span>
+                <h1>AWARENESS<span>OS</span></h1>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active">Dashboard</a>
+                
+                <a href="leaderboard.html" class="nav-item">Leaderboard</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="logout-link">Terminate Session</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="agent-profile">
+                    <div class="avatar-circle" id="avatarInitials">??</div>
+                    <div class="agent-meta">
+                        <h2 id="agentName">Loading Agent...</h2>
+                        <span id="agentRank" class="rank-badge rank-recruit">RECRUIT</span>
+                    </div>
+                </div>
+
+                <div class="xp-progress-section">
+                    <div class="xp-header">
+                        <span>SYSTEM PROGRESS</span>
+                        <span id="xpPercentText">0%</span>
+                    </div>
+                    <div class="xp-track">
+                        <div id="xpFill" class="xp-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">LIFETIME XP</span>
+                    <div class="stat-value" id="scoreVal">0</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">MODULES COMPLETED</span>
+                    <div class="stat-value" id="modulesVal">0 / 0</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">ACHIEVEMENTS</span>
+                    <div class="stat-value" id="badgeCount">0</div>
+                </div>
+            </section>
+
+            <!-- TRAINING MODULES SECTION (NEW) -->
+            <section class="modules-section">
+                <div class="section-header">
+                    <h2>📚 TRAINING MODULES</h2>
+                </div>
+                <div id="modulesContainer" class="modules-grid">
+                    <div class="loading-modules">Loading modules...</div>
+                </div>
+            </section>
+
+            <div class="dashboard-footer-grid">
+                <section class="panel achievement-panel">
+                    <h3>Unlocked Badges</h3>
+                    <div id="badgeShelf" class="badge-shelf">
+                    </div>
+                </section>
+
+                <section class="panel activity-panel">
+                    <h3>Terminal Output</h3>
+                    <div id="activityLog" class="log-list">
+                        <p class="log-entry">> Initializing secure connection...</p>
+                        <p class="log-entry">> Fetching agent telemetry...</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

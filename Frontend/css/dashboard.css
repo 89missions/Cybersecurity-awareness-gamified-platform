@@ -1,0 +1,187 @@
+:root {
+    --bg-main: #020617;
+    --bg-side: #0f172a;
+    --accent: #38bdf8;
+    --text-dim: #94a3b8;
+    --glass: rgba(255, 255, 255, 0.03);
+    --border: rgba(255, 255, 255, 0.1);
+    --success: #10b981;
+}
+
+* { box-sizing: border-box; }
+body { 
+    margin: 0; 
+    background: var(--bg-main); 
+    color: white; 
+    font-family: 'Inter', sans-serif; 
+    overflow: hidden; 
+}
+
+.dashboard-container { display: flex; height: 100vh; }
+
+/* Sidebar */
+.sidebar { 
+    width: 260px; 
+    background: var(--bg-side); 
+    border-right: 1px solid var(--border); 
+    padding: 2rem; 
+    display: flex; 
+    flex-direction: column; 
+}
+.logo-area h1 { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; letter-spacing: 1px; }
+.logo-area span { color: var(--accent); }
+.nav-menu { margin-top: 3rem; flex-grow: 1; }
+.nav-item { 
+    display: block; 
+    color: var(--text-dim); 
+    text-decoration: none; 
+    padding: 0.8rem 0; 
+    font-size: 0.9rem; 
+    transition: 0.3s; 
+}
+.nav-item.active { color: var(--accent); font-weight: bold; }
+
+/* Main Workspace */
+.main-content { flex-grow: 1; padding: 2rem; overflow-y: auto; }
+
+/* Top Bar */
+.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+.agent-profile { display: flex; align-items: center; gap: 1rem; }
+.avatar-circle { 
+    width: 55px; height: 55px; 
+    background: linear-gradient(135deg, var(--accent), #0ea5e9); 
+    border-radius: 50%; 
+    display: flex; align-items: center; justify-content: center; 
+    color: #000; font-weight: 800; font-size: 1.2rem; 
+}
+.rank-badge { font-size: 0.7rem; padding: 3px 10px; border-radius: 4px; font-weight: 800; letter-spacing: 1px; }
+.rank-recruit { background: #475569; color: white; }
+
+/* XP Bar */
+.xp-progress-section { width: 320px; }
+.xp-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 700; color: var(--text-dim); margin-bottom: 8px; }
+.xp-track { height: 6px; background: #1e293b; border-radius: 10px; overflow: hidden; }
+.xp-bar { height: 100%; background: var(--accent); border-radius: 10px; transition: width 1.5s ease-in-out; }
+
+/* Stats Grid */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+.stat-card { background: var(--glass); padding: 1.5rem; border: 1px solid var(--border); border-radius: 12px; }
+.stat-label { font-size: 0.65rem; color: var(--text-dim); font-weight: 700; letter-spacing: 1.5px; }
+.stat-value { font-size: 2.2rem; font-weight: 800; margin-top: 10px; font-family: 'JetBrains Mono', monospace; }
+
+/* Panels */
+.dashboard-footer-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; }
+.panel { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; min-height: 280px; }
+.panel h3 { font-size: 0.9rem; margin-top: 0; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+.badge-shelf { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 1rem; }
+.badge-item { padding: 10px 15px; background: rgba(56, 189, 248, 0.05); border: 1px solid var(--accent); border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
+
+.log-list { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.6; color: var(--text-dim); }
+.log-entry.success { color: var(--success); }
+
+/* Add these styles to your existing dashboard.css */
+
+/* Modules Section */
+.modules-section {
+    margin: 2.5rem 0;
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    font-size: 1rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+}
+
+.module-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: white;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+.module-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    background: rgba(56, 189, 248, 0.08);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.module-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--accent);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+}
+
+.module-card:hover::before {
+    transform: translateX(0);
+}
+
+.module-icon {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+
+.module-name {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.module-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.module-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+    padding-top: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.module-progress {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.loading-modules {
+    color: var(--text-dim);
+    padding: 2rem;
+    text-align: center;
+    background: var(--glass);
+    border-radius: 12px;
+    grid-column: 1 / -1;
+}

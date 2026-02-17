@@ -1,45 +1,44 @@
-const loginForm = document.getElementById('loginForm');
-const messageDiv = document.getElementById('message');
-const togglePassword = document.getElementById('togglePassword');
-const passwordInput = document.getElementById('password');
-
-// Password Visibility Toggle
-togglePassword.addEventListener('click', () => {
-    const type = passwordInput.type === 'password' ? 'text' : 'password';
-    passwordInput.type = type;
-    togglePassword.textContent = type === 'password' ? 'Show' : 'Hide';
-});
-
-loginForm.addEventListener('submit', async (e) => {
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    messageDiv.classList.add('hidden');
 
-    const userName = document.getElementById('userName').value;
-    const password = document.getElementById('password').value;
+    const btn = document.getElementById('submitBtn');
+    const msg = document.getElementById('message');
+    const user = document.getElementById('user').value;
+    const pass = document.getElementById('pass').value;
+
+    // Start Loading State
+    btn.classList.add('loading');
+    btn.disabled = true;
+    msg.classList.add('hidden');
 
     try {
         const response = await fetch('http://localhost:3000/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userName, password }),
-            credentials: 'include' // cookie is here, this contains the tokens
+            body: JSON.stringify({ userName: user, password: pass }),
+            credentials:'include'
         });
-        messageDiv.classList.remove('hidden');
+
+        btn.classList.remove('loading');
+        msg.classList.remove('hidden');
 
         if (response.ok) {
-            messageDiv.textContent = "Access Granted. Redirecting...";
-            messageDiv.className = "success";
-
+            msg.className = 'success';
+            msg.textContent = "Access Granted! Synchronizing...";
+            // Redirect to the dashboard
             setTimeout(() => {
-                window.location.href = './dashboard.html';
+                window.location.href = 'dashboard.html';
             }, 1500);
         } else {
-            messageDiv.textContent = "Invalid username or password."; 
-            messageDiv.className = "error";
+            btn.disabled = false;
+            msg.className = 'error';
+            msg.textContent = data.message || "Invalid credentials.";
         }
     } catch (error) {
-        messageDiv.classList.remove('hidden');
-        messageDiv.textContent = "Server offline.";
-        messageDiv.className = "error";
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        msg.classList.remove('hidden');
+        msg.className = 'error';
+        msg.textContent = "Authentication server offline.";
     }
 });

@@ -12,7 +12,7 @@ const getUserStats = async (req,res)=>{
  
     const stats = {
         username:findUser.username,
-        points:findUser.points,
+        points:findUser.totalPoints,
         completedModules:findUser.completedModules,
         totalModules:findUser.totalModules,
         badges:findUser.badges}
