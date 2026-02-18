@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const getQuestions = require('../controller/questionController')
+const {getQuestions,getNextQuestions} = require('../controller/questionController')
 
-router.get('/:id',getQuestions)
+router.get('/:moduleId',getQuestions)
+router.get('/questions/next/:moduleId', getNextQuestions);
 
 module.exports = router

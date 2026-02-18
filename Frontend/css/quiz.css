@@ -1,5 +1,3 @@
-/* quiz.css - extends your dashboard styling */
-
 /* Question card */
 .question-card {
     background: var(--glass);
@@ -188,7 +186,97 @@
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
+/* Add to quiz.css */
+.all-questions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
 
+.load-more-container {
+    text-align: center;
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.results-container {
+    padding: 1rem 0;
+}
+
+.score-banner {
+    background: var(--accent);
+    color: black;
+    padding: 1.5rem;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.result-card {
+    border-left: 4px solid;
+    margin-bottom: 1.5rem;
+}
+
+.result-card.correct {
+    border-left-color: #10b981;
+}
+
+.result-card.wrong {
+    border-left-color: #ef4444;
+}
+
+.result-badge {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.result-badge.correct {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.result-badge.wrong {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.selected-answer {
+    margin: 1rem 0;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+/* Add to quiz.css */
+.correct-answer {
+    margin: 1rem 0;
+    padding: 0.8rem;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    border-left: 4px solid #10b981;
+}
+
+.correct-answer strong {
+    color: #10b981;
+    display: block;
+    margin-bottom: 0.3rem;
+}
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
@@ -200,6 +288,292 @@
     }
     
     .question-text {
+        font-size: 1.2rem;
+    }
+}
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablet (768px - 1024px) */
+@media screen and (max-width: 1024px) {
+    .dashboard-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 1rem 2rem;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .logo-area h1 {
+        font-size: 1rem;
+    }
+
+    .nav-menu {
+        margin-top: 0;
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .nav-item {
+        padding: 0.5rem 0;
+    }
+
+    .sidebar-footer {
+        display: none;
+    }
+
+    .main-content {
+        padding: 1.5rem;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .xp-progress-section {
+        width: 100%;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .modules-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile (480px - 768px) */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        padding: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .logo-area {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .nav-menu {
+        width: 100%;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .nav-item {
+        font-size: 0.8rem;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    .agent-profile {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .avatar-circle {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .modules-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .module-card {
+        padding: 1.2rem;
+    }
+
+    .dashboard-footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    /* Quiz page mobile styles */
+    .all-questions-container {
+        gap: 1rem;
+    }
+
+    .question-card {
+        padding: 1.2rem;
+    }
+
+    .question-text {
+        font-size: 1.1rem;
+    }
+
+    .options-grid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .option-btn {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .load-more-container {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .load-more-container button {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+
+    .score-banner {
+        font-size: 1.2rem;
+        padding: 1rem;
+    }
+
+    .result-card {
+        padding: 1rem;
+    }
+
+    .question-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+/* Small Mobile (below 480px) */
+@media screen and (max-width: 480px) {
+    .nav-menu {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .nav-item {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .agent-meta h2 {
+        font-size: 1rem;
+    }
+
+    .rank-badge {
+        font-size: 0.6rem;
+        padding: 2px 8px;
+    }
+
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+
+    .stat-label {
+        font-size: 0.6rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .module-icon {
+        font-size: 1.8rem;
+    }
+
+    .module-name {
+        font-size: 1rem;
+    }
+
+    .module-desc {
+        font-size: 0.75rem;
+    }
+
+    .question-text {
+        font-size: 1rem;
+    }
+
+    .option-prefix {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    .selected-answer, 
+    .correct-answer,
+    .explanation-box {
+        font-size: 0.85rem;
+        padding: 0.6rem;
+    }
+}
+
+/* Handle landscape orientation on mobile */
+@media screen and (max-height: 600px) and (orientation: landscape) {
+    .dashboard-container {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        padding: 0.5rem 1rem;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .modules-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Fix for very small devices */
+@media screen and (max-width: 320px) {
+    .nav-item {
+        font-size: 0.65rem;
+    }
+
+    .agent-profile {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .avatar-circle {
+        width: 35px;
+        height: 35px;
+    }
+
+    .stat-value {
         font-size: 1.2rem;
     }
 }

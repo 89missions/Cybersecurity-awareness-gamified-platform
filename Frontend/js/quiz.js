@@ -1,3 +1,5 @@
+// quiz.js - Complete version with 10 questions at once and explanations
+
 document.addEventListener('DOMContentLoaded', async () => {
     // DOM elements
     const elements = {
@@ -17,10 +19,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         questions: [],
         currentBatch: 0,
         currentQIndex: 0,
-        answers: [null, null, null, null, null],
+        answers: [],
         totalPoints: 0,
         username: '',
-        moduleId: new URLSearchParams(window.location.search).get('moduleId')
+        moduleId: new URLSearchParams(window.location.search).get('moduleId'),
+        currentPage: 1,
+        totalAvailableQuestions: 0
     };
 
     // Store globally for event access
@@ -40,11 +44,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 2. Set module info
         setModuleInfo(state.moduleId, elements);
         
-        // 3. Load questions
+        // 3. Load questions (first 10 only)
         await loadQuestions(state, elements);
         
         // 4. Start quiz
-        renderQuestion(state, elements);
+        renderAllQuestions(state, elements);
         
     } catch (error) {
         handleError(error, elements);
@@ -84,10 +88,11 @@ function setModuleInfo(moduleId, elements) {
     elements.moduleTitle.textContent = module.title;
 }
 
+// FIXED: Load only first 10 questions
 async function loadQuestions(state, elements) {
     elements.log.innerHTML += `<p class="log-entry">> Loading questions...</p>`;
     
-    const questionsResponse = await fetch(`http://localhost:3000/questions/${state.moduleId}`, {
+    const questionsResponse = await fetch(`http://localhost:3000/questions/${state.moduleId}?page=1&limit=10`, {
         method: 'GET',
         credentials: 'include'
     });
@@ -97,215 +102,261 @@ async function loadQuestions(state, elements) {
     }
 
     const questionsData = await questionsResponse.json();
-    state.questions = questionsData.allQuestions || []; 
+    const allQuestions = questionsData.allQuestions || [];
     
-    elements.log.innerHTML += `<p class="log-entry success">> ${state.questions.length} questions loaded</p>`;
+    // FIXED: Only take first 10 questions
+    state.questions = allQuestions.slice(0, 10);
+    state.answers = new Array(state.questions.length).fill(null);
+    state.totalAvailableQuestions = allQuestions.length;
+    state.currentPage = 1;
+    
+    elements.log.innerHTML += `<p class="log-entry success">> Loaded ${state.questions.length} of ${state.totalAvailableQuestions} questions</p>`;
     return state.questions;
 }
 
-function renderQuestion(state, elements) {
-    const { questions, currentBatch, currentQIndex, answers } = state;
-    const startIdx = currentBatch * 5;
-    const batchQuestions = questions.slice(startIdx, startIdx + 5);
+function renderAllQuestions(state, elements) {
+    const { questions, answers } = state;
     
-    if (batchQuestions.length === 0) {
-        showCompletion(state, elements);
-        return;
-    }
-
-    const question = batchQuestions[currentQIndex];
-    const qNumber = startIdx + currentQIndex + 1;
-    const totalQs = Math.min(questions.length, 10);
-
-    // Update progress
-    elements.progressText.textContent = `${qNumber}/${totalQs}`;
-    elements.progressBar.style.width = `${(qNumber / totalQs) * 100}%`;
-
-    // Build HTML
-    elements.questionArea.innerHTML = getQuestionHTML(question, currentQIndex, answers, currentBatch);
-    elements.navButtons.innerHTML = getNavButtonsHTML(state);
-
-    // Attach option listeners
+    // Show all 10 questions at once
+    let allQuestionsHtml = '';
+    
+    questions.forEach((question, index) => {
+        allQuestionsHtml += renderSingleQuestion(question, index, answers[index]);
+    });
+    
+    elements.questionArea.innerHTML = `
+        <div class="all-questions-container">
+            ${allQuestionsHtml}
+        </div>
+        <button class="quiz-nav-btn primary" onclick="window.submitAllAnswers()" id="submitAllBtn">
+            SUBMIT ALL ANSWERS
+        </button>
+    `;
+    
+    // Progress starts at 0/10
+    const answeredCount = answers.filter(a => a !== null).length;
+    elements.progressText.textContent = `${answeredCount}/10`;
+    elements.progressBar.style.width = `${(answeredCount/10)*100}%`;
+    
+    // Attach listeners to all option buttons
     document.querySelectorAll('.option-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            state.answers[currentQIndex] = parseInt(btn.dataset.index);
-            renderQuestion(state, elements);
+        btn.addEventListener('click', (e) => {
+            const qIndex = parseInt(btn.dataset.qIndex);
+            const optIndex = parseInt(btn.dataset.optIndex);
+            state.answers[qIndex] = optIndex;
+            
+            // Update UI to show selected
+            document.querySelectorAll(`[data-q-index="${qIndex}"]`).forEach(b => {
+                b.classList.remove('selected');
+            });
+            btn.classList.add('selected');
+            
+            // Update progress as user answers
+            const newAnsweredCount = state.answers.filter(a => a !== null).length;
+            elements.progressText.textContent = `${newAnsweredCount}/10`;
+            elements.progressBar.style.width = `${(newAnsweredCount/10)*100}%`;
         });
     });
 }
 
-function getQuestionHTML(question, qIndex, answers, batchNum) {
+function renderSingleQuestion(question, index, selectedAnswer) {
     const letters = ['A', 'B', 'C', 'D'];
     const options = question.options || {};
-    const selected = answers[qIndex];
     
     let optionsHtml = '';
     for (let i = 0; i < 4; i++) {
         const letter = letters[i];
-        const optionText = options[letter]?.text || options[i]?.text || options[letter] || options[i] || '';
-        const isSelected = selected === i ? 'selected' : '';
+        const optionText = options[letter]?.text || '';
+        const isSelected = selectedAnswer === i ? 'selected' : '';
         
         optionsHtml += `
-            <button class="option-btn ${isSelected}" data-index="${i}">
+            <button class="option-btn ${isSelected}" data-q-index="${index}" data-opt-index="${i}">
                 <span class="option-prefix">${letter}</span>
                 ${optionText}
             </button>
         `;
     }
-
-    let explanationHtml = '';
-    if (selected !== null) {
-        const isCorrect = options[letters[selected]]?.isCorrect || options[selected]?.isCorrect;
-        const reason = options[letters[selected]]?.reason || options[selected]?.reason || 'No explanation';
-        
-        explanationHtml = `
-            <div class="explanation-box">
-                <strong>${isCorrect ? '✅ CORRECT' : '❌ INCORRECT'}</strong>
-                ${reason}
-            </div>
-        `;
-    }
-
+    
     return `
-        <div class="batch-indicator">BATCH ${batchNum + 1}/2 • Q${qIndex + 1}/5</div>
-        <div class="question-card">
+        <div class="question-card" data-q-index="${index}">
+            <div class="question-header">
+                <span class="question-number">Question ${index + 1}/10</span>
+            </div>
             <div class="question-text">${question.question}</div>
             <div class="options-grid">${optionsHtml}</div>
-            ${explanationHtml}
         </div>
     `;
 }
 
-function getNavButtonsHTML(state) {
-    const { currentBatch, currentQIndex, answers } = state;
-    const isLastInBatch = currentQIndex === 4;
-    const isLastBatch = currentBatch === 1;
-
-    let buttons = `
-        <button class="quiz-nav-btn" 
-            onclick="window.prevQuestion()" 
-            ${currentQIndex === 0 ? 'disabled' : ''}>
-            ← PREVIOUS
-        </button>
-    `;
-
-    if (isLastInBatch) {
-        buttons += `
-            <button class="quiz-nav-btn primary" onclick="window.submitBatch()">
-                ${isLastBatch ? 'COMPLETE' : 'SUBMIT BATCH →'}
-            </button>
-        `;
-    } else {
-        buttons += `
-            <button class="quiz-nav-btn primary" 
-                onclick="window.nextQuestion()" 
-                ${answers[currentQIndex] === null ? 'disabled' : ''}>
-                NEXT →
-            </button>
-        `;
-    }
-
-    return buttons;
-}
-
-// Global navigation functions
-window.nextQuestion = function() {
-    console.log('Next question clicked');
+// Submit function
+window.submitAllAnswers = async function() {
     const state = window.quizState;
     const elements = window.quizElements;
     
-    if (state && state.currentQIndex < 4) {
-        state.currentQIndex++;
-        renderQuestion(state, elements);
-    }
-};
-
-window.prevQuestion = function() {
-    console.log('Previous question clicked');
-    const state = window.quizState;
-    const elements = window.quizElements;
-    
-    if (state && state.currentQIndex > 0) {
-        state.currentQIndex--;
-        renderQuestion(state, elements);
-    }
-};
-
-window.submitBatch = async function() {
-    console.log('Submit batch clicked');
-    const state = window.quizState;
-    const elements = window.quizElements;
-    
-    if (!state) {
-        console.error('No quiz state found');
+    // Check if all questions answered
+    if (state.answers.includes(null)) {
+        alert('Please answer all questions before submitting');
         return;
     }
-
-    // Calculate points
-    const startIdx = state.currentBatch * 5;
-    const batchQuestions = state.questions.slice(startIdx, startIdx + 5);
-    let points = 0;
     
-    for (let i = 0; i < 5; i++) {
-        if (state.answers[i] === null) continue;
-        
-        const q = batchQuestions[i];
-        const options = q.options || {};
+    // Calculate points
+    let points = 0;
+    const answersData = [];
+    
+    state.questions.forEach((q, index) => {
+        const selected = state.answers[index];
         const letters = ['A', 'B', 'C', 'D'];
-        const selected = state.answers[i];
-        
-        const isCorrect = options[letters[selected]]?.isCorrect || options[selected]?.isCorrect;
+        const isCorrect = q.options[letters[selected]]?.isCorrect || false;
         if (isCorrect) points += 50;
-    }
-
+        
+        // Track for backend
+        answersData.push({
+            questionId: q.id || q._id,
+            wasCorrect: isCorrect
+        });
+    });
+    
     try {
+        // Submit to backend
         const response = await fetch('http://localhost:3000/submit-quiz', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ points })
+            body: JSON.stringify({ 
+                points,
+                answers: answersData,
+                moduleId: state.moduleId
+            })
         });
-
+        
         if (!response.ok) throw new Error('Submission failed');
-
-        const result = await response.json();
+        
         state.totalPoints += points;
-        elements.log.innerHTML += `<p class="log-entry success">> +${points} points earned</p>`;
-        console.log('Submission successful:', result);
-
-        if (state.currentBatch === 0 && state.questions.length >= 10) {
-            // Next batch
-            state.currentBatch = 1;
-            state.currentQIndex = 0;
-            state.answers = [null, null, null, null, null];
-            renderQuestion(state, elements);
-        } else {
-            // Complete
-            showCompletion(state, elements);
-        }
+        elements.log.innerHTML += `<p class="log-entry success">> +${points} points earned!</p>`;
+        
+        // Show results with explanations
+        showResultsWithExplanations(state, elements);
+        
     } catch (error) {
         console.error('Submit error:', error);
         elements.log.innerHTML += `<p class="log-entry error">> Submission failed: ${error.message}</p>`;
     }
 };
 
-function showCompletion(state, elements) {
-    elements.progressText.textContent = '10/10';
-    elements.progressBar.style.width = '100%';
+function showResultsWithExplanations(state, elements) {
+    const questionsWithAnswers = state.questions.map((q, index) => {
+        const selected = state.answers[index];
+        const letters = ['A', 'B', 'C', 'D'];
+        
+        // Find which option is correct
+        let correctLetter = '';
+        let correctText = '';
+        let selectedLetter = letters[selected];
+        let selectedText = q.options[letters[selected]]?.text || '';
+        const isCorrect = q.options[letters[selected]]?.isCorrect || false;
+        
+        // Loop through options to find the correct one
+        for (let i = 0; i < letters.length; i++) {
+            const letter = letters[i];
+            if (q.options[letter]?.isCorrect) {
+                correctLetter = letter;
+                correctText = q.options[letter]?.text || '';
+                break;
+            }
+        }
+        
+        const reason = q.options[letters[selected]]?.reason || 'No explanation available';
+        
+        // Build the result display
+        return `
+            <div class="question-card result-card ${isCorrect ? 'correct' : 'wrong'}">
+                <div class="question-header">
+                    <span class="question-number">Question ${index + 1}</span>
+                    <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">
+                        ${isCorrect ? '✅ CORRECT' : '❌ INCORRECT'}
+                    </span>
+                </div>
+                <div class="question-text">${q.question}</div>
+                
+                <div class="selected-answer">
+                    <strong>Your answer:</strong> ${selectedLetter}. ${selectedText}
+                </div>
+                
+                ${!isCorrect ? `
+                    <div class="correct-answer">
+                        <strong>✅ Correct answer:</strong> ${correctLetter}. ${correctText}
+                    </div>
+                ` : ''}
+                
+                <div class="explanation-box">
+                    <strong>Explanation:</strong> ${reason}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Check if there are more questions available
+    const hasMoreQuestions = (state.currentPage * 10) < state.totalAvailableQuestions;
     
     elements.questionArea.innerHTML = `
-        <div class="score-summary">
-            <div class="score-value">+${state.totalPoints}</div>
-            <div class="score-message">Module Complete!</div>
-            <button class="quiz-nav-btn primary" onclick="window.location.href='dashboard.html'">
-                RETURN TO DASHBOARD
-            </button>
+        <div class="results-container">
+            <div class="score-banner">
+                🎯 YOU EARNED ${state.totalPoints} POINTS
+            </div>
+            ${questionsWithAnswers}
+            <div class="load-more-container">
+                ${hasMoreQuestions ? 
+                    `<button class="quiz-nav-btn primary" onclick="window.loadMoreQuestions()">
+                        LOAD NEXT 10 QUESTIONS →
+                    </button>` : 
+                    `<p style="color: var(--text-dim);">You've completed all available questions!</p>`
+                }
+                <button class="quiz-nav-btn" onclick="window.location.href='dashboard.html'" style="margin-left: 1rem;">
+                    BACK TO DASHBOARD
+                </button>
+            </div>
         </div>
     `;
-    
-    elements.navButtons.innerHTML = '';
-    elements.log.innerHTML += `<p class="log-entry success">> Total earned: ${state.totalPoints}</p>`;
 }
+// FIXED: Load next set of questions with pagination
+window.loadMoreQuestions = async function() {
+    const state = window.quizState;
+    const elements = window.quizElements;
+    
+    elements.log.innerHTML += `<p class="log-entry">> Loading next questions...</p>`;
+    
+    try {
+        const nextPage = state.currentPage + 1;
+        const response = await fetch(`http://localhost:3000/questions/${state.moduleId}?page=${nextPage}&limit=10`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        if (!response.ok) throw new Error('Failed to load more questions');
+        
+        const data = await response.json();
+        const newQuestions = data.allQuestions || [];
+        
+        if (newQuestions.length === 0) {
+            elements.log.innerHTML += `<p class="log-entry">> No more questions available.</p>`;
+            return;
+        }
+        
+        // Update state with new questions (only take first 10)
+        state.questions = newQuestions.slice(0, 10);
+        state.answers = new Array(state.questions.length).fill(null);
+        state.currentPage = nextPage;
+        
+        // Re-render
+        renderAllQuestions(state, elements);
+        
+        elements.log.innerHTML += `<p class="log-entry success">> Loaded ${state.questions.length} new questions</p>`;
+        
+    } catch (error) {
+        console.error('Error loading more questions:', error);
+        elements.log.innerHTML += `<p class="log-entry error">> Failed to load more questions: ${error.message}</p>`;
+    }
+};
 
 function handleError(error, elements) {
     console.error('Quiz error:', error);
@@ -313,6 +364,7 @@ function handleError(error, elements) {
     elements.questionArea.innerHTML = `
         <div class="panel" style="text-align: center; padding: 2rem;">
             <h3>⚠️ Failed to Load</h3>
+            <p>${error.message}</p>
             <button onclick="window.location.href='dashboard.html'" class="quiz-nav-btn primary">
                 BACK TO DASHBOARD
             </button>

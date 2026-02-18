@@ -20,8 +20,8 @@ app.use(express.json())
 app.use(cookieParser())
 
 // app.use((req, res, next) => {
-//     console.log('🔥 All cookies at request start:', req.cookies);
-//     console.log('🔥 Raw cookie header:', req.headers.cookie);
+//     console.log('All cookies at request start:', req.cookies);
+//     console.log('Raw cookie header:', req.headers.cookie);
 //     next();
 // });
 
