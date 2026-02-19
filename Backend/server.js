@@ -36,6 +36,7 @@ app.use('/user-stats',require('./route/user-stats'))
 app.use('/module',require('./route/module'))
 app.use('/questions',require('./route/question'))
 app.use('/submit-quiz',require('./route/submit'))
+app.use('/leaderboard',require('./route/leaderboard'))
 
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB')

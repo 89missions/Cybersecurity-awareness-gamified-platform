@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Leaderboard · CyberAgent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/quiz.css">
+    <style>
+        /* Leaderboard specific styles */
+        .leaderboard-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .leaderboard-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .leaderboard-stats {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-table {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 120px 120px;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .leaderboard-row:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-row:hover {
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .leaderboard-row.header {
+            background: rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .rank-col {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+
+        .rank-1 { color: gold; }
+        .rank-2 { color: silver; }
+        .rank-3 { color: #cd7f32; } /* bronze */
+
+        .user-col {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent), #0ea5e9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .username {
+            font-weight: 600;
+        }
+
+        .points-col {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .rank-badge-col .rank-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--accent);
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-dim);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+
+        .quiz-nav-btn {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.quiz-nav-btn:hover:not(:disabled) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: black;
+}
+
+.quiz-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.quiz-nav-btn.primary {
+    background: var(--accent);
+    color: black;
+    font-weight: 800;
+}
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .back-button {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .leaderboard-row {
+                grid-template-columns: 60px 1fr 80px 100px;
+                padding: 0.8rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .user-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .leaderboard-row {
+                grid-template-columns: 40px 1fr 70px 80px;
+                padding: 0.6rem 0.8rem;
+                font-size: 0.75rem;
+            }
+
+            .rank-badge-col .rank-badge {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <span class="shield-icon">🛡️</span>
+                <h1>AWARENESS<span>OS</span></h1>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">Dashboard</a>
+                <a href="#" class="nav-item training">Training Modules</a>
+                <a href="leaderboard.html" class="nav-item active">Leaderboard</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="logout-link">Terminate Session</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="leaderboard-container">
+                <div class="leaderboard-header">
+                    <div class="leaderboard-title">🏆 AGENT RANKINGS</div>
+                    <div class="leaderboard-stats" id="stats">Loading...</div>
+                </div>
+
+                <div class="leaderboard-table" id="leaderboardTable">
+                    <div class="leaderboard-row header">
+                        <div>RANK</div>
+                        <div>AGENT</div>
+                        <div>XP</div>
+                        <div>RANK</div>
+                    </div>
+                    <div id="leaderboardRows">
+                        <!-- Rows will be inserted here -->
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <p>Fetching agent data...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="back-button">
+                    <button class="quiz-nav-btn " onclick="window.location.href='dashboard.html'">
+                        ← BACK TO DASHBOARD
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const leaderboardRows = document.getElementById('leaderboardRows');
+            const statsEl = document.getElementById('stats');
+
+            try {
+                const response = await fetch('http://localhost:3000/leaderboard', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load leaderboard');
+                }
+
+                const data = await response.json();
+                const users = data.users || [];
+
+                // Update stats
+                statsEl.textContent = `Top ${users.length} agents`;
+
+                if (users.length === 0) {
+                    leaderboardRows.innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: var(--text-dim);">
+                            <p>No agents found. Be the first!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Build leaderboard rows
+                let html = '';
+                users.forEach((user, index) => {
+                    const rank = index + 1;
+                    const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
+                    const initials = user.username.substring(0, 2).toUpperCase();
+                    
+                    html += `
+                        <div class="leaderboard-row">
+                            <div class="rank-col ${rankClass}">#${rank}</div>
+                            <div class="user-col">
+                                <div class="user-avatar">${initials}</div>
+                                <span class="username">${user.username}</span>
+                            </div>
+                            <div class="points-col">${user.totalPoints?.toLocaleString() || 0} XP</div>
+                            <div class="rank-badge-col">
+                                <span class="rank-badge">${user.rank || 'RECRUIT'}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                leaderboardRows.innerHTML = html;
+
+            } catch (error) {
+                console.error('Leaderboard error:', error);
+                leaderboardRows.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #ef4444;">
+                        <p>⚠️ Failed to load leaderboard</p>
+                        <p style="font-size: 0.8rem; margin-top: 1rem;">${error.message}</p>
+                    </div>
+                `;
+                statsEl.textContent = 'Error loading data';
+            }
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+            document.cookie = 'accessToken=; Max-Age=0; path=/; domain=localhost';
+            document.cookie = 'refreshToken=; Max-Age=0; path=/; domain=localhost';
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>
