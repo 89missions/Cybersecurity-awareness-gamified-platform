@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             // 1. Identity & Initials
             document.getElementById('agentName').textContent = data.username;
+            document.getElementById('agentRank').textContent = data.rank;
             document.getElementById('avatarInitials').textContent = data.username.substring(0, 2).toUpperCase();
             
             // 2. Core Stats

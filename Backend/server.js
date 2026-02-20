@@ -19,12 +19,6 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
-// app.use((req, res, next) => {
-//     console.log('All cookies at request start:', req.cookies);
-//     console.log('Raw cookie header:', req.headers.cookie);
-//     next();
-// });
-
 // Public Routes
 app.use('/register', require('./route/register'))
 app.use('/login', require('./route/login'))

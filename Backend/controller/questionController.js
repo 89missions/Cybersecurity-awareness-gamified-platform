@@ -3,7 +3,6 @@ const registeredUsers = require('../modal/regsiteredusers')
 
 const getQuestions = async (req,res)=>{
     try{
-        // FIXED: Use moduleId to match frontend
         const moduleId = req.params.moduleId;
 
         const allQuestions = await questions.find({moduleId:moduleId})
@@ -29,7 +28,6 @@ const getNextQuestions = async (req,res)=>{
             return res.status(404).json({ message: "User not found" });
         }
         
-        // FIXED: Handle case where answeredQuestions might be undefined
         const answeredIds = (user.answeredQuestions || [])
             .filter(q => q.moduleId === moduleId)
             .map(q => q.questionId);

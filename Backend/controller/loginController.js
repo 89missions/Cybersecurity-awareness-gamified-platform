@@ -35,9 +35,6 @@ const handleLogin = async (req,res)=>{
                 expiresIn:'2d'
             })
 
-            //add to the user..
-            foundUser.refreshToken = refreshToken
-
             //check for the total number of modules in the db..
             const count = await modules.countDocuments()
 
@@ -46,7 +43,6 @@ const handleLogin = async (req,res)=>{
 
             const update = await foundUser.save() //so with this , anytime the userlogs in, the total number gets updated if there has been a new addition to the module..
 
-            //console.log(accessToken)
             //sending it as a cookie and json res for the refreshToken and accessToken respectively to the client..
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,

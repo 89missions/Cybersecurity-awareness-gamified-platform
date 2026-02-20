@@ -1,0 +1,268 @@
+/* ===== LANDING PAGE STYLES ===== */
+/* Create this file as css/landing.css */
+
+/* Base styles */
+body { 
+    margin: 0; 
+    overflow: hidden; 
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #f1f5f9;
+}
+
+/* Canvas background */
+#threat-map {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: radial-gradient(circle at top right, #1e293b, #0f172a);
+}
+
+/* Auth container - centers content */
+.auth-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+    width: 90%;
+    max-width: 500px;
+    padding: 2rem;
+}
+
+/* Hero section specific */
+.hero-section {
+    text-align: center;
+    max-width: 500px;
+    z-index: 10;
+}
+
+/* Logo animation */
+.logo-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    filter: drop-shadow(0 0 15px #60a5fa);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Typography */
+h2 {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    color: #60a5fa;
+    margin-bottom: 1rem;
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+p {
+    color: #94a3b8;
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+/* Button group */
+.button-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Button styles (reusing from quiz-nav-btn) */
+.quiz-nav-btn {
+    background: #2563eb;
+    border: none;
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all 0.2s;
+    display: inline-block;
+    text-decoration: none;
+    min-width: 140px;
+}
+
+.quiz-nav-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5);
+}
+
+.btn-secondary {
+    background: transparent !important;
+    border: 2px solid #3b82f6 !important;
+    color: #60a5fa !important;
+}
+
+.btn-secondary:hover {
+    background: rgba(59, 130, 246, 0.1) !important;
+    transform: translateY(-2px);
+}
+
+/* Network status */
+.network-status {
+    margin-top: 2rem;
+    font-size: 0.75rem;
+    color: #475569;
+    letter-spacing: 2px;
+}
+
+.status-encrypted {
+    color: #22c55e;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet */
+@media screen and (max-width: 768px) {
+    .auth-container {
+        padding: 1.5rem;
+    }
+    
+    .logo-icon {
+        font-size: 3.5rem;
+    }
+    
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .quiz-nav-btn {
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto;
+    }
+}
+
+/* Mobile */
+@media screen and (max-width: 480px) {
+    .auth-container {
+        padding: 1rem;
+    }
+    
+    .logo-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    h2 {
+        font-size: 1.3rem;
+    }
+    
+    p {
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .quiz-nav-btn {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.85rem;
+        min-width: 120px;
+    }
+}
+
+/* Small Mobile */
+@media screen and (max-width: 360px) {
+    .logo-icon {
+        font-size: 2.5rem;
+    }
+    
+    h2 {
+        font-size: 1.1rem;
+    }
+    
+    p {
+        font-size: 0.8rem;
+    }
+}
+
+/* Landscape orientation */
+@media screen and (max-height: 600px) and (orientation: landscape) {
+    .auth-container {
+        top: 50%;
+        transform: translate(-50%, -50%);
+        padding: 1rem;
+    }
+    
+    .logo-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    h2 {
+        margin-bottom: 0.25rem;
+    }
+    
+    p {
+        margin-bottom: 1rem;
+    }
+    
+    .button-group {
+        margin-top: 1rem;
+    }
+}
+
+/* High-resolution screens */
+@media screen and (min-width: 1440px) {
+    .auth-container {
+        max-width: 600px;
+    }
+    
+    .logo-icon {
+        font-size: 5rem;
+    }
+    
+    h2 {
+        font-size: 2.5rem;
+    }
+    
+    p {
+        font-size: 1.1rem;
+    }
+}
+
+/* Animation for canvas particles */
+@keyframes glow {
+    0% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+    100% { opacity: 0.3; }
+}
+
+/* Ensure buttons are accessible */
+.quiz-nav-btn:focus {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    #threat-map {
+        display: none;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .quiz-nav-btn {
+        border: 1px solid black;
+        color: black;
+    }
+}

@@ -1,31 +1,93 @@
 const registeredUsers = require('../modal/regsiteredusers')
 
-const handleSubmission= async (req,res)=>{
-    //get the submission like this.. {totalPoints} i will get the user id from the jwt..
+const handleSubmission = async (req, res) => {
+    try {
+        const { points, answers, moduleId } = req.body
 
-    //gets the points..
-    const {points} = req.body
+        // Validate points
+        if (points > 500 || points < 0 || points % 50 !== 0) {
+            return res.status(400).json({ "message": "bad request.." })
+        }
 
-    //check if points isnt more than 250 which is the max or less than 0 or not a modulo of 50.. 
-    if(points>250 || points<0 || points % 50 !==0){
-        return res.status(400).json({"message":"bad request.."})
-    } 
+        // Find the user
+        const foundUser = await registeredUsers.findOne({ username: req.user })
 
-    //update the users point..
-    //find the user...
-    const foundUser = await registeredUsers.findOne({username:req.user})
-    
-    if(!foundUser){
-        return res.status(404).json({"message":"cant find user in the database..."})
+        if (!foundUser) {
+            return res.status(404).json({ "message": "cant find user in the database..." })
+        }
+
+        // Update points
+        foundUser.totalPoints += points
+        
+        // Add answered questions
+        if (answers && Array.isArray(answers)) {
+            answers.forEach(ans => {
+                foundUser.answeredQuestions.push({
+                    questionId: ans.questionId,
+                    moduleId: moduleId,
+                    wasCorrect: ans.wasCorrect,
+                    answeredAt: new Date()
+                })
+            })
+        }
+
+        // Check if this module is being completed for the first time
+        const questionsForThisModule = foundUser.answeredQuestions.filter(
+            q => q.moduleId === moduleId
+        ).length
+
+        // If they've answered 10 questions and haven't completed this module before
+        if (questionsForThisModule >= 10 && !foundUser.completedModulesList.includes(moduleId)) {
+            foundUser.completedModulesList.push(moduleId)
+        }
+
+        // Get current completed modules count
+        const completedCount = foundUser.completedModulesList.length
+
+        // Calculate achievements (with duplicate checks)
+        if (completedCount >= 1 && !foundUser.badges.includes("🔥 First Blood")) {
+            foundUser.badges.push("🔥 First Blood")
+        }
+        
+        if (completedCount >= 2 && !foundUser.badges.includes(" Persistence")) {
+            foundUser.badges.push(" Persistence")
+        }
+        
+        if (completedCount >= 3 && !foundUser.badges.includes("📚 Scholar")) {
+            foundUser.badges.push("📚 Scholar")
+        }
+        
+        if (foundUser.totalPoints >= 10000 && !foundUser.badges.includes("💰 Point Collector")) {
+            foundUser.badges.push("💰 Point Collector")
+        }
+        
+        if (foundUser.totalPoints >= 50000 && !foundUser.badges.includes("💎 Elite Agent")) {
+            foundUser.badges.push("💎 Elite Agent")
+        }
+        if (foundUser.completedModulesList.includes("Phishsing101") && !foundUser.badges.includes("🎣 Phishing Expert")) {
+            foundUser.badges.push("🎣 Phishing Expert")
+        }
+        if (foundUser.completedModulesList.includes("VirusAttack101") && !foundUser.badges.includes("🦠 Malware Hunter")) {
+            foundUser.badges.push("🦠 Malware Hunter")
+        }
+        if (foundUser.completedModulesList.includes("Prevention101") && !foundUser.badges.includes("🛡️ Security Guru")) {
+            foundUser.badges.push("🛡️ Security Guru")
+        }
+
+        // Save the user
+        await foundUser.save()
+
+        return res.status(200).json({ 
+            "message": "updated successfully...",
+            "completedModules": completedCount,
+            "totalPoints": foundUser.totalPoints,
+            "badges": foundUser.badges
+        })
+
+    } catch (error) {
+        console.error("Submission error:", error)
+        return res.status(500).json({ "message": "internal server error" })
     }
-
-   // foundUser.updateOne({totalPoints:{$inc:points}})
-
-   await registeredUsers.updateOne(
-    { username: req.user },
-    { $inc: { totalPoints: points } }  // Correct $inc syntax
-)
-    return res.status(200).json({"message":"updated successfully..."})
-
 }
+
 module.exports = handleSubmission
