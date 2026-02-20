@@ -46,20 +46,18 @@ const handleLogin = async (req,res)=>{
             //sending it as a cookie and json res for the refreshToken and accessToken respectively to the client..
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
-                secure: false,              // false for localhost
-                sameSite: 'lax',            // or 'strict'
-                maxAge: 24 * 60 * 60 * 1000, // 24 hours (not 15 minutes!)
-                path: '/',                   // Available on all paths
-                domain: 'localhost'          // Explicit domain
+                secure: true,        
+                sameSite: 'none',  
+                domain: '.onrender.com',
+                maxAge: 24 * 60 * 60 * 1000,
+                path: '/',
             });
             
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
-                secure: false,
-                sameSite: 'lax',
+                secure: true,
+                sameSite: 'none',
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-                path: '/',
-                domain: 'localhost'
             });
 
             return res.sendStatus(200)
