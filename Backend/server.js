@@ -11,10 +11,22 @@ const serverPort = process.env.PORT || 3500
 // Connect to Database
 connectDb()
 
+const allowedOrigins = [
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'https://cybersecureaware.netlify.app'
+];
+
 app.use(cors({
-    origin: 'http://localhost:5500',//this is the exact frontend and not localhost:5500
-    credentials: true 
-}))
+    origin: function(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
 
 app.use(express.json())
 app.use(cookieParser())

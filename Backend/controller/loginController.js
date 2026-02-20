@@ -41,26 +41,28 @@ const handleLogin = async (req,res)=>{
             //update the count to the registereduser
             foundUser.totalModules = count
 
-            const update = await foundUser.save() //so with this , anytime the userlogs in, the total number gets updated if there has been a new addition to the module..
+            const update = await foundUser.save()
 
             //sending it as a cookie and json res for the refreshToken and accessToken respectively to the client..
+            const isProduction = process.env.NODE_ENV === 'production';
+
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
-                secure: true,        
-                sameSite: 'none',  
-                domain: '.onrender.com',
+                secure: isProduction,       
+                sameSite: isProduction ? 'none' : 'lax', 
                 maxAge: 24 * 60 * 60 * 1000,
                 path: '/',
             });
             
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                secure: isProduction,
+                sameSite: isProduction ? 'none' : 'lax',
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                path: '/',
             });
 
-            return res.sendStatus(200)
+            return res.status(200).json({"message":"loggedIn successfully"})
         }
         
     } catch (error) {
