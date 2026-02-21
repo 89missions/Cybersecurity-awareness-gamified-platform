@@ -65,8 +65,8 @@ async function loadUserData(elements, state) {
 function setModuleInfo(moduleId, elements) {
     const modules = {
         'Phishing101': { icon: '⚠️', title: 'Phishing Attacks' },
-        'malware101': { icon: '🦠', title: 'Malware & Viruses' },
-        'prevention101': { icon: '🛡️', title: 'Threat Prevention' }
+        'VirusAttack101': { icon: '🦠', title: 'Malware & Viruses' },
+        'Prevention101': { icon: '🛡️', title: 'Threat Prevention' }
     };
     
     const module = modules[moduleId] || { icon: '📘', title: 'Training Module' };
@@ -77,13 +77,20 @@ function setModuleInfo(moduleId, elements) {
 async function loadQuestions(state, elements) {
     elements.log.innerHTML += `<p class="log-entry">> Loading questions...</p>`;
     
-    const response = await fetch(
-        `${window.appConfig.API_BASE_URL}/questions/${state.moduleId}?page=${state.currentPage}&limit=10`, 
-        {
-            method: 'GET',
-            credentials: 'include'
+    // Add cache busting to prevent browser from caching the response
+    const cacheBuster = Date.now();
+    const url = `${window.appConfig.API_BASE_URL}/questions/${state.moduleId}?page=${state.currentPage}&limit=10&_=${cacheBuster}`;
+    
+    console.log('📡 Fetching from:', url);
+    
+    const response = await fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
-    );
+    });
 
     if (!response.ok) {
         throw new Error('Failed to load questions');
@@ -91,7 +98,10 @@ async function loadQuestions(state, elements) {
 
     const data = await response.json();
     
-    state.questions = data.questions || [];
+    console.log('📦 Response data:', data);
+    console.log('📦 Questions count:', data.allQuestions?.length);
+    
+    state.questions = data.allQuestions || [];
     state.answers = new Array(state.questions.length).fill(null);
     state.totalAvailableQuestions = data.totalAvailable || 0;
     
@@ -100,6 +110,11 @@ async function loadQuestions(state, elements) {
 
 function renderAllQuestions(state, elements) {
     const { questions, answers } = state;
+    
+    if (!questions || questions.length === 0) {
+        elements.questionArea.innerHTML = `<p>No questions available</p>`;
+        return;
+    }
     
     let allQuestionsHtml = '';
     questions.forEach((question, index) => {
@@ -119,17 +134,24 @@ function renderAllQuestions(state, elements) {
     elements.progressText.textContent = `${answeredCount}/10`;
     elements.progressBar.style.width = `${(answeredCount/10)*100}%`;
     
+    // Re-attach event listeners
     document.querySelectorAll('.option-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const qIndex = parseInt(btn.dataset.qIndex);
-            const optIndex = parseInt(btn.dataset.optIndex);
+        btn.addEventListener('click', function(e) {
+            const qIndex = parseInt(this.dataset.qIndex);
+            const optIndex = parseInt(this.dataset.optIndex);
+            
+            // Update state
             state.answers[qIndex] = optIndex;
             
+            // Update UI - remove selected from all buttons for this question
             document.querySelectorAll(`[data-q-index="${qIndex}"]`).forEach(b => {
                 b.classList.remove('selected');
             });
-            btn.classList.add('selected');
             
+            // Add selected to clicked button
+            this.classList.add('selected');
+            
+            // Update progress
             const newAnsweredCount = state.answers.filter(a => a !== null).length;
             elements.progressText.textContent = `${newAnsweredCount}/10`;
             elements.progressBar.style.width = `${(newAnsweredCount/10)*100}%`;
@@ -166,15 +188,20 @@ function renderSingleQuestion(question, index, selectedAnswer) {
     `;
 }
 
+// Attach functions to window for onclick handlers
 window.submitAllAnswers = async function() {
     const state = window.quizState;
     const elements = window.quizElements;
     
+    if (!state || !elements) return;
+    
+    // Check if all questions answered
     if (state.answers.includes(null)) {
         alert('Please answer all questions before submitting');
         return;
     }
     
+    // Calculate points
     let points = 0;
     const answersData = [];
     
@@ -185,7 +212,7 @@ window.submitAllAnswers = async function() {
         if (isCorrect) points += 50;
         
         answersData.push({
-            questionId: q.id || q._id,
+            questionId: q.id,
             wasCorrect: isCorrect
         });
     });
@@ -226,6 +253,7 @@ function showResultsWithExplanations(state, elements) {
         let selectedText = q.options[letters[selected]]?.text || '';
         const isCorrect = q.options[letters[selected]]?.isCorrect || false;
         
+        // Find correct answer
         for (let i = 0; i < letters.length; i++) {
             const letter = letters[i];
             if (q.options[letter]?.isCorrect) {
@@ -264,7 +292,7 @@ function showResultsWithExplanations(state, elements) {
         `;
     }).join('');
     
-    // ✅ FIXED: More accurate calculation
+    // Calculate if more questions exist
     const totalPages = Math.ceil(state.totalAvailableQuestions / 10);
     const hasMoreQuestions = state.currentPage < totalPages;
     
@@ -289,22 +317,25 @@ function showResultsWithExplanations(state, elements) {
     `;
 }
 
-// ✅ FIXED: Load next page with error recovery
 window.loadMoreQuestions = async function() {
     const state = window.quizState;
     const elements = window.quizElements;
+    
+    if (!state || !elements) return;
     
     elements.log.innerHTML += `<p class="log-entry">> Loading next questions...</p>`;
     
     try {
         state.currentPage++;
+        console.log('📄 Loading page:', state.currentPage);
+        
         await loadQuestions(state, elements);
         renderAllQuestions(state, elements);
         
     } catch (error) {
         console.error('Error loading more questions:', error);
         elements.log.innerHTML += `<p class="log-entry error">> Failed to load more questions</p>`;
-        state.currentPage--; // Revert page number on error
+        state.currentPage--; // Revert on error
     }
 };
 

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getQuestions } = require('../controllers/questionController');
+const { getQuestions } = require('../controller/questionController');
 
-// This one endpoint handles ALL question fetching with pagination
+// This MUST be GET and accept query params
 router.get('/:moduleId', getQuestions);
 
 module.exports = router;

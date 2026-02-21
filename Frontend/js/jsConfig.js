@@ -1,7 +1,9 @@
-//your own
+const isLocal =
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1';
+
 const config = {
-    API_BASE_URL: window.location.hostname === 'localhost' 
-        ? 'http://localhost:3000'
-        : 'https://cybersecurity-awareness-gamified-platform.onrender.com'
+  API_BASE_URL: isLocal
+    ? 'http://localhost:3000'
+    : 'https://cybersecurity-awareness-gamified-platform.onrender.com'
 };
-window.appConfig = config;

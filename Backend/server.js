@@ -35,7 +35,6 @@ app.use(cookieParser())
 app.use('/register', require('./route/register'))
 app.use('/login', require('./route/login'))
 
-
 app.use(verifyJWT) 
 // 3. Protected Routes go below here
 app.use('/user-stats',require('./route/user-stats'))
