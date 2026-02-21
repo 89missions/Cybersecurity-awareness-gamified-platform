@@ -1,8 +1,8 @@
-const express = require('express')
-const router = express.Router()
-const {getQuestions,getNextQuestions} = require('../controller/questionController')
+const express = require('express');
+const router = express.Router();
+const { getQuestions } = require('../controllers/questionController');
 
-router.get('/:moduleId',getQuestions)
-router.get('/questions/next/:moduleId', getNextQuestions);
+// This one endpoint handles ALL question fetching with pagination
+router.get('/:moduleId', getQuestions);
 
-module.exports = router
+module.exports = router;

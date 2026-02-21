@@ -39,6 +39,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         btn.disabled = false;
         msg.classList.remove('hidden');
         msg.className = 'error';
-        msg.textContent = "Authentication server offline.";
+        msg.textContent = "Not Authorized...";
     }
 });
