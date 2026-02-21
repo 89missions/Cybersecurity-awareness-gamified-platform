@@ -38,7 +38,8 @@ const handleLogin = async (req,res)=>{
             //check for the total number of modules in the db..
             const count = await modules.countDocuments()
 
-            //update the count to the registereduser
+            //update the count and refreshToken to the registereduser
+            foundUser.refreshToken = refreshToken
             foundUser.totalModules = count
 
             const update = await foundUser.save()
