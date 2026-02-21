@@ -1,4 +1,3 @@
-// quiz.js - Complete version with 10 questions at once and explanations
 
 document.addEventListener('DOMContentLoaded', async () => {
     // DOM elements
@@ -58,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ========== HELPER FUNCTIONS ==========
 
 async function loadUserData(elements, state) {
-    const response = await fetch('http://localhost:3000/user-stats', {
+    const response = await fetch(`${window.appConfig.API_BASE_URL}/user-stats`, {
         method: 'GET',
         credentials: 'include'
     });
@@ -92,7 +91,7 @@ function setModuleInfo(moduleId, elements) {
 async function loadQuestions(state, elements) {
     elements.log.innerHTML += `<p class="log-entry">> Loading questions...</p>`;
     
-    const questionsResponse = await fetch(`http://localhost:3000/questions/${state.moduleId}?page=1&limit=10`, {
+    const questionsResponse = await fetch(`${window.appConfig.API_BASE_URL}/questions/${state.moduleId}?page=1&limit=10`, {
         method: 'GET',
         credentials: 'include'
     });
@@ -218,7 +217,7 @@ window.submitAllAnswers = async function() {
     
     try {
         // Submit to backend
-        const response = await fetch('http://localhost:3000/submit-quiz', {
+        const response = await fetch(`${window.appConfig.API_BASE_URL}/submit-quiz`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -327,7 +326,7 @@ window.loadMoreQuestions = async function() {
     
     try {
         const nextPage = state.currentPage + 1;
-        const response = await fetch(`http://localhost:3000/questions/${state.moduleId}?page=${nextPage}&limit=10`, {
+        const response = await fetch(`${window.appConfig.API_BASE_URL}/questions/${state.moduleId}?page=${nextPage}&limit=10`, {
             method: 'GET',
             credentials: 'include'
         });

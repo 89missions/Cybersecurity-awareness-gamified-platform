@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         // Fetch user stats
-        const response = await fetch('http://localhost:3000/user-stats', {
+        const response = await fetch(`${window.appConfig.API_BASE_URL}/user-stats`, {
             method: 'GET',
             credentials: 'include' 
         });
@@ -58,7 +58,7 @@ async function loadModules() {
     const log = document.getElementById('activityLog');
     
     try {
-        const response = await fetch('http://localhost:3000/module', {
+        const response = await fetch(`${window.appConfig.API_BASE_URL}/module`, {
             method: 'GET',
             credentials: 'include'
         });

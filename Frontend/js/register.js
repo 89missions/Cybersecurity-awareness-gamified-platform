@@ -12,7 +12,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     msg.classList.add('hidden');
 
     try {
-        const response = await fetch('http://localhost:3000/register', {
+        const response = await fetch(`${window.appConfig.API_BASE_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userName: user, password: pass })
