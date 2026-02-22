@@ -1,4 +1,5 @@
-const registeredUsers = require('../modal/regsiteredusers')
+const registeredUsers = require('../modal/regsiteredusers');
+const Questions = require('../modal/questions'); // Added for total question count
 
 const handleSubmission = async (req, res) => {
     try {
@@ -31,14 +32,22 @@ const handleSubmission = async (req, res) => {
             })
         }
 
-        // Check if this module is being completed for the first time
+        // Get total questions available for this module
+        const totalQuestionsInModule = await Questions.countDocuments({ 
+            moduleId: moduleId 
+        });
+
+        // Count how many questions they've answered for this module
         const questionsForThisModule = foundUser.answeredQuestions.filter(
             q => q.moduleId === moduleId
-        ).length
+        ).length;
 
-        // If they've answered 10 questions and haven't completed this module before
-        if (questionsForThisModule >= 10 && !foundUser.completedModulesList.includes(moduleId)) {
-            foundUser.completedModulesList.push(moduleId)
+        // Only mark as completed if they've answered ALL questions
+        if (questionsForThisModule >= totalQuestionsInModule && 
+            !foundUser.completedModulesList.includes(moduleId)) {
+            
+            foundUser.completedModulesList.push(moduleId);
+            console.log(`Module ${moduleId} completed! All ${totalQuestionsInModule} questions answered.`);
         }
 
         // Get current completed modules count
@@ -64,7 +73,8 @@ const handleSubmission = async (req, res) => {
         if (foundUser.totalPoints >= 50000 && !foundUser.badges.includes("💎 Elite Agent")) {
             foundUser.badges.push("💎 Elite Agent")
         }
-        if (foundUser.completedModulesList.includes("Phishsing101") && !foundUser.badges.includes("🎣 Phishing Expert")) {
+        
+        if (foundUser.completedModulesList.includes("Phishing101") && !foundUser.badges.includes("🎣 Phishing Expert")) {
             foundUser.badges.push("🎣 Phishing Expert")
         }
         if (foundUser.completedModulesList.includes("VirusAttack101") && !foundUser.badges.includes("🦠 Malware Hunter")) {

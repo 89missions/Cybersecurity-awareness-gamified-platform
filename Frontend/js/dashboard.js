@@ -22,16 +22,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('badgeCount').textContent = data.badges ? data.badges.length : 0;
             
             // 3. XP Progress
-            const xpValue = data.xpPercent || 0;
+          /*  const xpValue = data.xpPercent || 0;
             document.getElementById('xpPercentText').textContent = `${xpValue}%`;
             setTimeout(() => {
                 document.getElementById('xpFill').style.width = `${xpValue}%`;
-            }, 500);
+            }, 500); */
 
             // 4. Badge Rendering
             const shelf = document.getElementById('badgeShelf');
             if (data.badges && data.badges.length > 0) {
-                shelf.innerHTML = data.badges.map(b => `<div class="badge-item">🏅 ${b}</div>`).join('');
+                shelf.innerHTML = data.badges.map(b => `<div class="badge-item">${b}</div>`).join('');
             } else {
                 shelf.innerHTML = '<p style="color: #475569; font-size: 0.8rem;">Complete your first training module to earn a badge.</p>';
             }

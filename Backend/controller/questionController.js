@@ -11,11 +11,6 @@ const getQuestions = async (req, res) => {
         const limit = Number(req.query.limit) || 10;
         const skip = (page - 1) * limit;
         
-        console.log("\n========== PAGINATION DEBUG ==========");
-        console.log("Page param:", req.query.page, "->", page);
-        console.log("Limit param:", req.query.limit, "->", limit);
-        console.log("Skip calculated:", skip);
-        
         // Find user
         const user = await registeredUsers.findOne({ username });
         if (!user) {
@@ -41,8 +36,6 @@ const getQuestions = async (req, res) => {
         .skip(skip)
         .limit(limit)
         .lean(); // Add .lean() for better performance
-        
-        console.log(`Returning ${questionsList.length} of ${totalUnanswered} total`);
         
         if (!questionsList || questionsList.length === 0) {
             return res.status(404).json({ message: "No questions available" });
