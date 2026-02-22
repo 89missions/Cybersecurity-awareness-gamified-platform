@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         // Fetch user stats
-        const response = await fetch(`${window.appConfig.API_BASE_URL}/user-stats`, {
+            const response = await fetch(`${window.appConfig.API_BASE_URL}/user-stats`, {
             method: 'GET',
             credentials: 'include' 
         });
