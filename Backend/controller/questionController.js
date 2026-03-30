@@ -28,14 +28,14 @@ const getQuestions = async (req, res) => {
             id: { $nin: answeredIds }
         });
         
-        // Get paginated questions - CRITICAL PART
+        
         const questionsList = await Questions.find({
             moduleId: moduleId,
             id: { $nin: answeredIds }
         })
         .skip(skip)
         .limit(limit)
-        .lean(); // Add .lean() for better performance
+        .lean();
         
         if (!questionsList || questionsList.length === 0) {
             return res.status(404).json({ message: "No questions available" });
