@@ -6,7 +6,6 @@ const getQuestions = async (req, res) => {
         const moduleId = req.params.moduleId;
         const username = req.user;
         
-        // FORCE these to be numbers
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 10;
         const skip = (page - 1) * limit;

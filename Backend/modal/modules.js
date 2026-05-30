@@ -9,3 +9,5 @@ const modules = new schema({
 })
 
 module.exports = mongoose.model('modules',modules)
+
+modules.index({ id: 1 }, { unique: true })
