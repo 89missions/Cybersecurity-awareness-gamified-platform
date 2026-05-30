@@ -122,8 +122,22 @@ async function loadModules() {
    
 
 // Logout functionality
-document.getElementById('logoutBtn')?.addEventListener('click', () => {
-    document.cookie = 'accessToken=; Max-Age=0; path=/; domain=localhost';
-    document.cookie = 'refreshToken=; Max-Age=0; path=/; domain=localhost';
-    window.location.href = 'login.html';
-});
+document.getElementById('logoutBtn')
+?.addEventListener('click', async () => {
+
+    try {
+
+        await fetch(
+            `${window.appConfig.API_BASE_URL}/logout`,
+            {
+                method: 'POST',
+                credentials: 'include'
+            }
+        )
+
+    } catch (error) {
+        console.log(error)
+    }
+
+    window.location.href = 'login.html'
+})

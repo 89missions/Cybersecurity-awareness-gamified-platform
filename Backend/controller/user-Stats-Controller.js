@@ -13,24 +13,32 @@ const getUserStats = async (req, res) => {
         // Calculate rank based on total points
         const points = findUser.totalPoints || 0
         
-        if (points < 5000) {
+        if (points < 1000) {
             findUser.rank = "RECRUIT"
-        } else if (points < 15000) {
+        } else if (points < 1500) {
             findUser.rank = "BugHunterJr"
-        } else if (points < 25000) {
+            findUser.badges.push("🐞")
+        } else if (points < 2500) {
             findUser.rank = "ZeroDayZebra"
-        } else if (points < 35000) {
+            findUser.badges.push(" ⚡")
+        } else if (points < 3500) {
             findUser.rank = "PhishSniper"
-        } else if (points < 45000) {
+            findUser.badges.push(" 🎯 ")
+        } else if (points < 4500) {
             findUser.rank = "RootRanger"
-        } else if (points < 55000) {
+            findUser.badges.push("🔑 ")
+        } else if (points < 5500) {
             findUser.rank = "ExploitEagle"
-        } else if (points < 65000) {
+            findUser.badges.push("🦅 ")
+        } else if (points < 6500) {
             findUser.rank = "DarkEntropy"
-        } else if (points < 75000) {
+            findUser.badges.push("🌌 ")
+        } else if (points < 7500) {
             findUser.rank = "ShadowInjector"
+            findUser.badges.push("👤 ")
         } else {
             findUser.rank = "HexViper"
+            findUser.badges.push("🐍")
         }
 
         // Save the updated rank to database
@@ -42,10 +50,10 @@ const getUserStats = async (req, res) => {
             rank: findUser.rank,
             completedModules: findUser.completedModulesList.length,
             totalModules: findUser.totalModules,
-            badges: findUser.badches
+            badges: findUser.badges
         }
         
-        console.log(stats)
+      /*console.log(stats)*/
         return res.status(200).json(stats)
         
     } catch (error) {

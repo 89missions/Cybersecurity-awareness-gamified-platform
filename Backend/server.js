@@ -35,6 +35,8 @@ app.use(cookieParser())
 // Public Routes
 app.use('/register', require('./route/register'))
 app.use('/login', require('./route/login'))
+app.use('/refresh',require('./route/refreshToken'))
+app.use('/logout', require('./route/logout'))
 
 app.use(verifyJWT) 
 // 3. Protected Routes go below here

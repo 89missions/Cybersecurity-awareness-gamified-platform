@@ -51,7 +51,7 @@ const handleLogin = async (req,res)=>{
                 httpOnly: true,
                 secure: isProduction,       
                 sameSite: isProduction ? 'none' : 'lax', 
-                maxAge: 7 * 24 * 60 * 1000,
+                maxAge: 15 * 60 * 1000,
                 path: '/',
             });
             
